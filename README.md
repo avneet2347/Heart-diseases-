@@ -10,25 +10,58 @@ A comprehensive machine learning application for predicting heart disease risk w
 - **Interactive Interface**: User-friendly Streamlit web application
 - **Educational Content**: Medical information and disclaimers for educational purposes
 
+## Patient Data Collection Chatbot
+
+The interactive patient data collection chatbot (`patient_chatbot.py`) guides you through collecting all 13 medical parameters through conversation:
+
+### How to Use:
+```bash
+python patient_chatbot.py
+```
+
+### What it collects:
+- **Patient Name** (optional)
+- **Age** (1-120 years)
+- **Sex** (Male/Female)
+- **Chest Pain Type** (4 categories)
+- **Resting Blood Pressure** (80-200 mm Hg)
+- **Cholesterol Level** (100-600 mg/dL)
+- **Fasting Blood Sugar** (Normal/High)
+- **Resting ECG Results** (3 categories)
+- **Maximum Heart Rate** (60-220 bpm)
+- **Exercise Induced Angina** (Yes/No)
+- **ST Depression** (0.0-6.2 mm)
+- **ST Segment Slope** (3 types)
+- **Major Vessels Affected** (0-3)
+- **Thallium Stress Test** (3 results)
+
+### Features:
+✅ **Interactive Q&A**: Step-by-step medical data collection  
+✅ **Input Validation**: Ensures medically valid ranges  
+✅ **Medical Explanations**: Educational information for each parameter  
+✅ **Data Persistence**: Saves to `patient_data.json` for app integration  
+✅ **Form Pre-filling**: Streamlit app automatically loads saved data  
+
+### Workflow:
+1. Run `python patient_chatbot.py`
+2. Answer questions about patient medical history
+3. Review and confirm the collected data
+4. Data is automatically saved and loaded in the prediction app
+5. Use the "Clear Patient Data" button in the app to reset
+
 ## Quick Start
 
-1. **Clone the repository**:
+1. **Collect Patient Data**:
    ```bash
-   git clone https://github.com/avneet2347/Heart-diseases-.git
-   cd Heart-diseases-
+   python patient_chatbot.py
    ```
 
-2. **Use the Deployment Chatbot** (Recommended):
+2. **Run the Prediction App**:
    ```bash
-   python deploy_chatbot.py
+   streamlit run app.py --server.port 8502
    ```
-   The chatbot will guide you through the entire deployment process, asking for all necessary details.
 
-3. **Manual Installation**:
-   ```bash
-   pip install -r requirements.txt
-   streamlit run app.py
-   ```
+3. **View Results**: The form will be pre-filled with patient data, click "Predict" to see analysis.
 
 ## Deployment Chatbot
 
