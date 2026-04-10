@@ -1,54 +1,20 @@
 import streamlit as st
 import numpy as np
 import pickle
-import json
-import os
 
 # Load the trained model
 model = pickle.load(open("model.pkl", "rb"))
 
-# Function to load patient data from chatbot
-def load_patient_data():
-    """Load patient data from JSON file if it exists"""
-    data_file = "patient_data.json"
-    if os.path.exists(data_file):
-        try:
-            with open(data_file, 'r') as f:
-                return json.load(f)
-        except:
-            return None
-    return None
-
-# Load patient data
-patient_data = load_patient_data()
-
 # Title
 st.title("🫀 Heart Disease Prediction")
 
-# Display patient data status
-if patient_data:
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        st.success("✅ Patient data loaded from chatbot! Form is pre-filled below.")
-        if patient_data.get('patient_name'):
-            st.info(f"**Patient:** {patient_data['patient_name']}")
-    with col2:
-        if st.button("🗑️ Clear Patient Data"):
-            if os.path.exists("patient_data.json"):
-                os.remove("patient_data.json")
-            st.rerun()
-else:
-    st.info("💡 No patient data loaded. Use `python patient_chatbot.py` to collect data first.")
-
 # Age input (integer only)
-default_age = patient_data.get('age', 50) if patient_data else 50
-age = st.number_input("Age", min_value=1, max_value=120, value=default_age, step=1, format="%d")
+age = st.number_input("Age", min_value=1, max_value=120, value=50, step=1, format="%d")
 st.info(f"**Age:** {age} years")
 
 # Sex selection
 sex_options = {0: "Male", 1: "Female"}
-default_sex = patient_data.get('sex', 0) if patient_data else 0
-sex = st.selectbox("Sex", options=list(sex_options.keys()), format_func=lambda x: sex_options[x], index=default_sex)
+sex = st.selectbox("Sex", options=list(sex_options.keys()), format_func=lambda x: sex_options[x], index=0)
 st.info(f"**Selected:** {sex_options[sex]}")
 
 # Chest Pain Type
@@ -58,8 +24,7 @@ cp_options = {
     2: "Non-anginal Pain",
     3: "Asymptomatic"
 }
-default_cp = patient_data.get('cp', 0) if patient_data else 0
-cp = st.selectbox("Chest Pain Type", options=list(cp_options.keys()), format_func=lambda x: f"{x} → {cp_options[x]}", index=default_cp)
+cp = st.selectbox("Chest Pain Type", options=list(cp_options.keys()), format_func=lambda x: f"{x} → {cp_options[x]}", index=0)
 st.info(f"**Selected:** {cp_options[cp]}")
 
 # Blood Pressure and Cholesterol with risk table
@@ -68,13 +33,11 @@ st.subheader("🩸 Blood Pressure & Cholesterol")
 col1, col2 = st.columns(2)
 
 with col1:
-    default_trestbps = patient_data.get('trestbps', 120) if patient_data else 120
-    trestbps = st.number_input("Resting Blood Pressure (mm Hg)", min_value=80, max_value=200, value=default_trestbps, step=1)
+    trestbps = st.number_input("Resting Blood Pressure (mm Hg)", min_value=80, max_value=200, value=120, step=1)
     st.info(f"**Blood Pressure:** {trestbps} mm Hg")
 
 with col2:
-    default_chol = patient_data.get('chol', 200) if patient_data else 200
-    chol = st.number_input("Cholesterol Level (mg/dL)", min_value=100, max_value=600, value=default_chol, step=1)
+    chol = st.number_input("Cholesterol Level (mg/dL)", min_value=100, max_value=600, value=200, step=1)
     st.info(f"**Cholesterol:** {chol} mg/dL")
 
 # Risk assessment table
@@ -92,8 +55,7 @@ fbs_options = {
     0: "FBS ≤ 120 mg/dL (Normal)",
     1: "FBS > 120 mg/dL (High)"
 }
-default_fbs = patient_data.get('fbs', 0) if patient_data else 0
-fbs = st.selectbox("Fasting Blood Sugar", options=list(fbs_options.keys()), format_func=lambda x: f"{x}: {fbs_options[x]}", index=default_fbs)
+fbs = st.selectbox("Fasting Blood Sugar", options=list(fbs_options.keys()), format_func=lambda x: f"{x}: {fbs_options[x]}", index=0)
 st.info(f"**Selected:** {fbs_options[fbs]}")
 
 # Thalium (Thalassemia)
@@ -102,13 +64,11 @@ thal_options = {
     2: "Fixed Defect",
     3: "Reversible Defect"
 }
-default_thal = patient_data.get('thal', 1) if patient_data else 1
-thal = st.selectbox("Thallium (Thalassemia)", options=list(thal_options.keys()), format_func=lambda x: f"{x}: {thal_options[x]}", index=list(thal_options.keys()).index(default_thal))
+thal = st.selectbox("Thallium (Thalassemia)", options=list(thal_options.keys()), format_func=lambda x: f"{x}: {thal_options[x]}", index=0)
 st.info(f"**Selected:** {thal_options[thal]}")
 
 # Max Heart Rate
-default_thalach = patient_data.get('thalach', 150) if patient_data else 150
-thalach = st.number_input("Maximum Heart Rate (bpm)", min_value=60, max_value=220, value=default_thalach, step=1)
+thalach = st.number_input("Maximum Heart Rate (bpm)", min_value=60, max_value=220, value=150, step=1)
 max_hr_calc = 220 - age
 st.info(f"**Max Heart Rate:** {thalach} bpm")
 st.success(f"**Expected Max HR (220 - Age):** {max_hr_calc} bpm")
@@ -118,13 +78,11 @@ exang_options = {
     0: "No (exercise pe pain nahi)",
     1: "Yes (exercise pe pain hota hai)"
 }
-default_exang = patient_data.get('exang', 0) if patient_data else 0
-exang = st.selectbox("Exercise Induced Angina", options=list(exang_options.keys()), format_func=lambda x: f"{x}: {exang_options[x]}", index=default_exang)
+exang = st.selectbox("Exercise Induced Angina", options=list(exang_options.keys()), format_func=lambda x: f"{x}: {exang_options[x]}", index=0)
 st.info(f"**Selected:** {exang_options[exang]}")
 
 # ST Depression
-default_oldpeak = patient_data.get('oldpeak', 1.0) if patient_data else 1.0
-oldpeak = st.number_input("ST Depression (mm)", min_value=0.0, max_value=6.2, value=default_oldpeak, step=0.1, format="%.1f")
+oldpeak = st.number_input("ST Depression (mm)", min_value=0.0, max_value=6.2, value=1.0, step=0.1, format="%.1f")
 
 # ST Depression risk assessment
 if oldpeak == 0.0:
@@ -158,8 +116,7 @@ slope_options = {
     1: "Flat (ST segment straight hai)",
     2: "Downsloping (ST segment niche ja raha hai)"
 }
-default_slope = patient_data.get('slope', 1) if patient_data else 1
-slope = st.selectbox("Slope of Peak Exercise ST Segment", options=list(slope_options.keys()), format_func=lambda x: f"{x}: {slope_options[x]}", index=default_slope)
+slope = st.selectbox("Slope of Peak Exercise ST Segment", options=list(slope_options.keys()), format_func=lambda x: f"{x}: {slope_options[x]}", index=1)
 st.info(f"**Selected:** {slope_options[slope]}")
 
 # ECG Results
@@ -168,8 +125,7 @@ restecg_options = {
     1: "ST-T wave abnormality",
     2: "Left Ventricular Hypertrophy (LVH)"
 }
-default_restecg = patient_data.get('restecg', 0) if patient_data else 0
-restecg = st.selectbox("Resting ECG Results", options=list(restecg_options.keys()), format_func=lambda x: f"{x}: {restecg_options[x]}", index=default_restecg)
+restecg = st.selectbox("Resting ECG Results", options=list(restecg_options.keys()), format_func=lambda x: f"{x}: {restecg_options[x]}", index=0)
 st.info(f"**Selected:** {restecg_options[restecg]}")
 
 # Number of Major Vessels
@@ -179,8 +135,7 @@ ca_options = {
     2: "2 vessels affected",
     3: "3 vessels affected"
 }
-default_ca = patient_data.get('ca', 0) if patient_data else 0
-ca = st.selectbox("Number of Major Vessels", options=list(ca_options.keys()), format_func=lambda x: f"{x}: {ca_options[x]}", index=default_ca)
+ca = st.selectbox("Number of Major Vessels", options=list(ca_options.keys()), format_func=lambda x: f"{x}: {ca_options[x]}", index=0)
 st.info(f"**Selected:** {ca_options[ca]}")
 
 # Prediction

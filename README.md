@@ -10,83 +10,23 @@ A comprehensive machine learning application for predicting heart disease risk w
 - **Interactive Interface**: User-friendly Streamlit web application
 - **Educational Content**: Medical information and disclaimers for educational purposes
 
-## Patient Data Collection Chatbot
-
-The interactive patient data collection chatbot (`patient_chatbot.py`) guides you through collecting all 13 medical parameters through conversation:
-
-### How to Use:
-```bash
-python patient_chatbot.py
-```
-
-### What it collects:
-- **Patient Name** (optional)
-- **Age** (1-120 years)
-- **Sex** (Male/Female)
-- **Chest Pain Type** (4 categories)
-- **Resting Blood Pressure** (80-200 mm Hg)
-- **Cholesterol Level** (100-600 mg/dL)
-- **Fasting Blood Sugar** (Normal/High)
-- **Resting ECG Results** (3 categories)
-- **Maximum Heart Rate** (60-220 bpm)
-- **Exercise Induced Angina** (Yes/No)
-- **ST Depression** (0.0-6.2 mm)
-- **ST Segment Slope** (3 types)
-- **Major Vessels Affected** (0-3)
-- **Thallium Stress Test** (3 results)
-
-### Features:
-✅ **Interactive Q&A**: Step-by-step medical data collection  
-✅ **Input Validation**: Ensures medically valid ranges  
-✅ **Medical Explanations**: Educational information for each parameter  
-✅ **Data Persistence**: Saves to `patient_data.json` for app integration  
-✅ **Form Pre-filling**: Streamlit app automatically loads saved data  
-
-### Workflow:
-1. Run `python patient_chatbot.py`
-2. Answer questions about patient medical history
-3. Review and confirm the collected data
-4. Data is automatically saved and loaded in the prediction app
-5. Use the "Clear Patient Data" button in the app to reset
-
 ## Quick Start
 
-1. **Collect Patient Data**:
+1. **Install Dependencies**:
    ```bash
-   python patient_chatbot.py
+   pip install -r requirements.txt
    ```
 
-2. **Run the Prediction App**:
+2. **Run the Application**:
    ```bash
-   streamlit run app.py --server.port 8502
+   streamlit run app.py
    ```
 
-3. **View Results**: The form will be pre-filled with patient data, click "Predict" to see analysis.
-
-## Deployment Chatbot
-
-The interactive deployment chatbot (`deploy_chatbot.py`) will ask you detailed questions about:
-
-- **Application Name**: Custom name for your deployment
-- **Deployment Type**: Local, Docker, Cloud, or Server deployment
-- **Environment**: Development, Staging, or Production
-- **Port Configuration**: Custom port for the application
-- **Database Setup**: Optional database configuration
-- **Authentication**: User authentication options
-- **Monitoring**: Logging and monitoring preferences
-- **API Endpoints**: REST API exposure
-- **Security**: HTTPS and security settings
-- **Performance**: Upload limits and scaling options
-- **Backups**: Automatic backup configuration
-- **Notifications**: Email notification setup
-
-The chatbot will automatically:
-- Generate configuration files (`.streamlit/config.toml`, `.env`)
-- Create Docker files if needed
-- Install dependencies
-- Start the application
+3. **Access the App**: Open your browser to the provided URL (usually http://localhost:8501)
 
 ## Manual Configuration
+
+If you need custom configuration:
 
 If you prefer manual setup:
 
