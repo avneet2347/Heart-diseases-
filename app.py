@@ -2,212 +2,249 @@ import streamlit as st
 import numpy as np
 import pickle
 
+# Load the trained model
 model = pickle.load(open("model.pkl", "rb"))
 
-st.title("❤️ Heart Disease Prediction")
+# Title
+st.title("Heart Disease Prediction")
 
-st.markdown("""
-### 🏥 Advanced Heart Disease Risk Assessment
-Enter patient information below to get an AI-powered heart disease risk prediction.
-""")
+# Age input (integer only)
+age = st.number_input("Age", min_value=1, max_value=120, value=50, step=1, format="%d")
+st.info(f"**Age:** {age} years")
 
-# Create two columns for better layout
+# Sex selection
+sex_options = {0: "Male", 1: "Female"}
+sex = st.selectbox("Sex", options=list(sex_options.keys()), format_func=lambda x: sex_options[x])
+st.info(f"**Selected:** {sex_options[sex]}")
+
+# Chest Pain Type
+cp_options = {
+    0: "Typical Angina",
+    1: "Atypical Angina",
+    2: "Non-anginal Pain",
+    3: "Asymptomatic"
+}
+cp = st.selectbox("Chest Pain Type", options=list(cp_options.keys()), format_func=lambda x: f"{x} → {cp_options[x]}")
+st.info(f"**Selected:** {cp_options[cp]}")
+
+# Blood Pressure and Cholesterol with risk table
+st.subheader("🩸 Blood Pressure & Cholesterol")
+
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("📊 Patient Demographics")
-
-    # Age - Integer input
-    age = st.number_input("Age (years)", min_value=1, max_value=120, value=50, step=1, format="%d")
-    st.info(f"💡 Max Heart Rate should be: **{220 - age} bpm**")
-
-    # Sex with descriptive labels
-    sex_options = {0: "Female", 1: "Male"}
-    sex_display = st.selectbox("Sex", options=list(sex_options.keys()), format_func=lambda x: sex_options[x])
-    st.caption(f"Selected: **{sex_options[sex_display]}**")
+    trestbps = st.number_input("Resting Blood Pressure (mm Hg)", min_value=80, max_value=200, value=120, step=1)
+    st.info(f"**Blood Pressure:** {trestbps} mm Hg")
 
 with col2:
-    st.subheader("🫀 Cardiac Parameters")
+    chol = st.number_input("Cholesterol Level (mg/dL)", min_value=100, max_value=600, value=200, step=1)
+    st.info(f"**Cholesterol:** {chol} mg/dL")
 
-    # Chest Pain Type with descriptions
-    cp_options = {
-        0: "Typical Angina - Chest pain during physical activity",
-        1: "Atypical Angina - Chest pain not related to physical activity",
-        2: "Non-anginal Pain - Chest discomfort not typical of angina",
-        3: "Asymptomatic - No chest pain symptoms"
-    }
-    cp_display = st.selectbox("Chest Pain Type", options=list(cp_options.keys()), format_func=lambda x: f"{x} - {cp_options[x].split(' - ')[1]}")
-    st.caption(f"Selected: **{cp_options[cp_display]}**")
+# Risk assessment table
+st.markdown("**Risk Assessment Table:**")
+risk_data = {
+    "BP": [120, 150, 130],
+    "Cholesterol": [180, 250, 300],
+    "Risk": ["Low", "High", "Medium-High"]
+}
 
-# Blood Pressure and Cholesterol with risk assessment
-st.subheader("🩸 Blood Pressure & Cholesterol")
+st.table(risk_data)
 
-col3, col4 = st.columns(2)
+# Fasting Blood Sugar
+fbs_options = {
+    0: "FBS ≤ 120 mg/dL (Normal)",
+    1: "FBS > 120 mg/dL (High)"
+}
+fbs = st.selectbox("Fasting Blood Sugar", options=list(fbs_options.keys()), format_func=lambda x: f"{x}: {fbs_options[x]}")
+st.info(f"**Selected:** {fbs_options[fbs]}")
 
-with col3:
-    trestbps = st.number_input("Resting Blood Pressure (mm Hg)", min_value=80, max_value=200, value=120)
-    # Blood pressure risk assessment
-    if trestbps < 120:
-        bp_risk = "🟢 Normal (< 120)"
-    elif trestbps < 130:
-        bp_risk = "🟡 Elevated (120-129)"
-    elif trestbps < 140:
-        bp_risk = "🟠 Stage 1 Hypertension (130-139)"
-    else:
-        bp_risk = "🔴 Stage 2 Hypertension (≥ 140)"
-    st.success(f"Blood Pressure Risk: {bp_risk}")
+# Thalium (Thalassemia)
+thal_options = {
+    1: "Normal",
+    2: "Fixed Defect",
+    3: "Reversible Defect"
+}
+thal = st.selectbox("Thallium (Thalassemia)", options=list(thal_options.keys()), format_func=lambda x: f"{x}: {thal_options[x]}")
+st.info(f"**Selected:** {thal_options[thal]}")
 
-with col4:
-    chol = st.number_input("Cholesterol Level (mg/dL)", min_value=100, max_value=600, value=200)
-    # Cholesterol risk assessment
-    if chol < 200:
-        chol_risk = "🟢 Desirable (< 200)"
-    elif chol < 240:
-        chol_risk = "🟡 Borderline High (200-239)"
-    else:
-        chol_risk = "🔴 High (≥ 240)"
-    st.success(f"Cholesterol Risk: {chol_risk}")
+# Max Heart Rate
+thalach = st.number_input("Maximum Heart Rate (bpm)", min_value=60, max_value=220, value=150, step=1)
+max_hr_calc = 220 - age
+st.info(f"**Max Heart Rate:** {thalach} bpm")
+st.success(f"**Expected Max HR (220 - Age):** {max_hr_calc} bpm")
 
-# Additional parameters
-st.subheader("🔬 Diagnostic Tests")
+# Exercise Induced Angina
+exang_options = {
+    0: "No (exercise pe pain nahi)",
+    1: "Yes (exercise pe pain hota hai)"
+}
+exang = st.selectbox("Exercise Induced Angina", options=list(exang_options.keys()), format_func=lambda x: f"{x}: {exang_options[x]}")
+st.info(f"**Selected:** {exang_options[exang]}")
 
-col5, col6 = st.columns(2)
+# ST Depression
+oldpeak = st.number_input("ST Depression (mm)", min_value=0.0, max_value=6.2, value=1.0, step=0.1, format="%.1f")
 
-with col5:
-    # Fasting Blood Sugar
-    fbs_options = {
-        0: "Normal (FBS ≤ 120 mg/dL)",
-        1: "High (FBS > 120 mg/dL)"
-    }
-    fbs_display = st.selectbox("Fasting Blood Sugar", options=list(fbs_options.keys()), format_func=lambda x: fbs_options[x])
-    st.caption(f"Selected: **{fbs_options[fbs_display]}**")
+# ST Depression risk assessment
+if oldpeak == 0.0:
+    st_risk = "Low"
+    st_meaning = "Normal"
+elif oldpeak <= 1.0:
+    st_risk = "Medium"
+    st_meaning = "Mild change"
+elif oldpeak <= 2.0:
+    st_risk = "High"
+    st_meaning = "Significant depression"
+else:
+    st_risk = "Very High"
+    st_meaning = "Severe"
 
-    # EKG Results
-    restecg_options = {
-        0: "Normal - No abnormalities",
-        1: "ST-T Wave Abnormality - Possible heart stress",
-        2: "Left Ventricular Hypertrophy - Heart muscle thickening"
-    }
-    restecg_display = st.selectbox("EKG Results", options=list(restecg_options.keys()), format_func=lambda x: f"{x} - {restecg_options[x].split(' - ')[1]}")
-    st.caption(f"Selected: **{restecg_options[restecg_display]}**")
+st.info(f"**ST Depression:** {oldpeak} mm")
+st.warning(f"**Risk Level:** {st_risk} - {st_meaning}")
 
-with col6:
-    # Max Heart Rate
-    thalach = st.number_input("Max Heart Rate Achieved (bpm)", min_value=60, max_value=220, value=150)
-    max_hr_expected = 220 - age
-    if thalach >= max_hr_expected * 0.8:
-        hr_status = "🟢 Good exercise capacity"
-    elif thalach >= max_hr_expected * 0.6:
-        hr_status = "🟡 Moderate exercise capacity"
-    else:
-        hr_status = "🟠 Poor exercise capacity"
-    st.info(f"Heart Rate Status: {hr_status}")
+# ST Depression risk table
+st.markdown("**ST Depression Risk Table:**")
+st_table = {
+    "ST Depression": ["0.0", "0.1 – 1.0", "> 1.0", "> 2.0"],
+    "Meaning": ["Normal", "Mild change", "Significant depression", "Severe"],
+    "Risk": ["Low", "Medium", "High", "Very High"]
+}
+st.table(st_table)
 
-    # Exercise Angina
-    exang_options = {
-        0: "No - No chest pain during exercise",
-        1: "Yes - Chest pain occurs during exercise"
-    }
-    exang_display = st.selectbox("Exercise Angina", options=list(exang_options.keys()), format_func=lambda x: exang_options[x])
-    st.caption(f"Selected: **{exang_options[exang_display]}**")
+# Slope
+slope_options = {
+    0: "Upsloping (ST segment upar ja raha hai)",
+    1: "Flat (ST segment straight hai)",
+    2: "Downsloping (ST segment niche ja raha hai)"
+}
+slope = st.selectbox("Slope of Peak Exercise ST Segment", options=list(slope_options.keys()), format_func=lambda x: f"{x}: {slope_options[x]}")
+st.info(f"**Selected:** {slope_options[slope]}")
 
-# ST Depression and Slope
-st.subheader("📈 ECG Analysis")
+# ECG Results
+restecg_options = {
+    0: "Normal",
+    1: "ST-T wave abnormality",
+    2: "Left Ventricular Hypertrophy (LVH)"
+}
+restecg = st.selectbox("Resting ECG Results", options=list(restecg_options.keys()), format_func=lambda x: f"{x}: {restecg_options[x]}")
+st.info(f"**Selected:** {restecg_options[restecg]}")
 
-col7, col8 = st.columns(2)
+# Number of Major Vessels
+ca_options = {
+    0: "No major vessel blockage",
+    1: "1 vessel affected",
+    2: "2 vessels affected",
+    3: "3 vessels affected"
+}
+ca = st.selectbox("Number of Major Vessels", options=list(ca_options.keys()), format_func=lambda x: f"{x}: {ca_options[x]}")
+st.info(f"**Selected:** {ca_options[ca]}")
 
-with col7:
-    oldpeak = st.number_input("ST Depression (mm)", min_value=0.0, max_value=6.2, value=1.0, step=0.1)
-    # ST Depression risk assessment
-    if oldpeak == 0.0:
-        st_risk = "🟢 Normal - No depression"
-    elif oldpeak <= 1.0:
-        st_risk = "🟡 Mild - Slight depression (0.1-1.0 mm)"
-    elif oldpeak <= 2.0:
-        st_risk = "🟠 Significant - Moderate depression (1.1-2.0 mm)"
-    else:
-        st_risk = "🔴 Severe - Major depression (> 2.0 mm)"
-    st.warning(f"ST Depression Risk: {st_risk}")
+# Prediction
+if st.button("Predict"):
+    input_data = np.array([[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]])
+    prediction = model.predict(input_data)
 
-with col8:
-    # Slope
-    slope_options = {
-        0: "Upsloping - ST segment rises upward",
-        1: "Flat - ST segment is horizontal",
-        2: "Downsloping - ST segment falls downward"
-    }
-    slope_display = st.selectbox("ST Segment Slope", options=list(slope_options.keys()), format_func=lambda x: f"{x} - {slope_options[x].split(' - ')[1]}")
-    st.caption(f"Selected: **{slope_options[slope_display]}**")
+    st.markdown("---")
+    st.subheader("🔍 Patient Symptoms Analysis")
 
-# Final parameters
-st.subheader("🔍 Advanced Cardiac Assessment")
+    # Analyze symptoms based on input parameters
+    symptoms = []
 
-col9, col10 = st.columns(2)
+    # Age-related symptoms
+    if age > 50:
+        symptoms.append("• Age > 50 years (increased cardiovascular risk)")
 
-with col9:
-    # Number of Vessels
-    ca_options = {
-        0: "No major vessel blockage",
-        1: "1 vessel affected",
-        2: "2 vessels affected",
-        3: "3 vessels affected"
-    }
-    ca_display = st.selectbox("Number of Vessels Affected", options=list(ca_options.keys()), format_func=lambda x: f"{x} - {ca_options[x]}")
-    st.caption(f"Selected: **{ca_options[ca_display]}**")
+    # Sex-related symptoms
+    if sex == 1:  # Female
+        symptoms.append("• Female gender (different risk profile)")
 
-with col10:
-    # Thallium Test
-    thal_options = {
-        1: "Normal - No defects detected",
-        2: "Fixed Defect - Permanent damage",
-        3: "Reversible Defect - Temporary ischemia"
-    }
-    thal_display = st.selectbox("Thallium Stress Test", options=list(thal_options.keys()), format_func=lambda x: f"{x} - {thal_options[x].split(' - ')[1]}")
-    st.caption(f"Selected: **{thal_options[thal_display]}**")
+    # Chest pain analysis
+    if cp == 0:
+        symptoms.append("• Typical Angina (chest pain during physical activity)")
+    elif cp == 1:
+        symptoms.append("• Atypical Angina (chest pain not related to physical activity)")
+    elif cp == 2:
+        symptoms.append("• Non-anginal Pain (chest discomfort not typical of angina)")
+    elif cp == 3:
+        symptoms.append("• Asymptomatic (no chest pain symptoms)")
 
-# Prediction Section
-st.markdown("---")
-st.subheader("🔮 Prediction Results")
+    # Blood pressure symptoms
+    if trestbps >= 140:
+        symptoms.append(f"• High Blood Pressure ({trestbps} mm Hg - Hypertension)")
+    elif trestbps >= 130:
+        symptoms.append(f"• Elevated Blood Pressure ({trestbps} mm Hg - Stage 1 Hypertension)")
 
-if st.button("🩺 Predict Heart Disease Risk", type="primary", use_container_width=True):
-    with st.spinner("Analyzing patient data..."):
-        # Prepare input data
-        input_data = np.array([[age, sex_display, cp_display, trestbps, chol, fbs_display,
-                                restecg_display, thalach, exang_display, oldpeak,
-                                slope_display, ca_display, thal_display]])
+    # Cholesterol symptoms
+    if chol >= 240:
+        symptoms.append(f"• High Cholesterol ({chol} mg/dL - Hypercholesterolemia)")
+    elif chol >= 200:
+        symptoms.append(f"• Borderline High Cholesterol ({chol} mg/dL)")
 
-        # Make prediction
-        result = model.predict(input_data)
-        prediction_proba = model.predict_proba(input_data)[0]
+    # Blood sugar symptoms
+    if fbs == 1:
+        symptoms.append("• High Fasting Blood Sugar (> 120 mg/dL - Possible Diabetes)")
 
-        # Display results
-        if result[0] == 1:
-            st.error("🚨 **Heart Disease Detected**")
-            st.markdown(f"**Confidence:** {prediction_proba[1]*100:.1f}%")
+    # ECG symptoms
+    if restecg == 1:
+        symptoms.append("• ST-T Wave Abnormality (possible heart stress)")
+    elif restecg == 2:
+        symptoms.append("• Left Ventricular Hypertrophy (heart muscle thickening)")
 
-            # Risk factors summary
-            risk_factors = []
-            if trestbps >= 140: risk_factors.append("High Blood Pressure")
-            if chol >= 240: risk_factors.append("High Cholesterol")
-            if fbs_display == 1: risk_factors.append("High Blood Sugar")
-            if exang_display == 1: risk_factors.append("Exercise Angina")
-            if oldpeak > 1.0: risk_factors.append("ST Depression")
-            if ca_display >= 2: risk_factors.append("Multiple Vessel Blockage")
+    # Heart rate symptoms
+    max_expected_hr = 220 - age
+    if thalach < max_expected_hr * 0.8:
+        symptoms.append(f"• Low Exercise Heart Rate ({thalach} bpm - poor cardiovascular fitness)")
 
-            if risk_factors:
-                st.warning("**Key Risk Factors Identified:**")
-                for factor in risk_factors:
-                    st.markdown(f"• {factor}")
+    # Exercise angina symptoms
+    if exang == 1:
+        symptoms.append("• Exercise Induced Angina (chest pain during exercise)")
 
+    # ST depression symptoms
+    if oldpeak > 1.0:
+        if oldpeak > 2.0:
+            symptoms.append(f"• Severe ST Depression ({oldpeak} mm - significant ischemia)")
         else:
-            st.success("✅ **No Heart Disease Detected**")
-            st.markdown(f"**Confidence:** {prediction_proba[0]*100:.1f}%")
+            symptoms.append(f"• ST Depression ({oldpeak} mm - myocardial stress)")
 
-            st.info("**Recommendations:**")
-            st.markdown("• Maintain regular check-ups")
-            st.markdown("• Follow a heart-healthy lifestyle")
-            st.markdown("• Monitor blood pressure and cholesterol")
+    # Slope symptoms
+    if slope == 2:
+        symptoms.append("• Downsloping ST Segment (concerning ECG pattern)")
 
-# Footer
-st.markdown("---")
-st.caption("⚠️ **Medical Disclaimer:** This tool provides preliminary risk assessment. Always consult qualified healthcare professionals for proper diagnosis and treatment.")
+    # Vessel symptoms
+    if ca > 0:
+        symptoms.append(f"• {ca} coronary vessel(s) affected (blockage detected)")
+
+    # Thalassemia symptoms
+    if thal == 2:
+        symptoms.append("• Fixed Defect (permanent heart muscle damage)")
+    elif thal == 3:
+        symptoms.append("• Reversible Defect (temporary reduced blood flow)")
+
+    # Display results
+    if prediction[0] == 1:
+        st.error("🚨 **Heart Disease Risk Detected**")
+        st.markdown("**Based on your symptoms, you may have heart disease. Please consult a cardiologist immediately.**")
+    else:
+        st.success("✅ **Low Heart Disease Risk**")
+        st.markdown("**Your symptoms suggest low risk of heart disease, but regular check-ups are recommended.**")
+
+    # Display symptoms
+    st.markdown("### 📋 **Patient Symptoms Identified:**")
+    if symptoms:
+        for symptom in symptoms:
+            st.markdown(symptom)
+    else:
+        st.info("No significant symptoms detected from the provided parameters.")
+
+    # Risk assessment summary
+    st.markdown("### 📊 **Risk Assessment Summary:**")
+    risk_factors = len([s for s in symptoms if any(word in s.lower() for word in ['high', 'hypertension', 'hypercholesterolemia', 'diabetes', 'abnormality', 'hypertrophy', 'angina', 'depression', 'ischemia', 'damage', 'blockage'])])
+
+    if risk_factors >= 3:
+        st.error(f"**High Risk:** {risk_factors} major risk factors identified")
+    elif risk_factors >= 1:
+        st.warning(f"**Moderate Risk:** {risk_factors} risk factor(s) identified")
+    else:
+        st.success("**Low Risk:** Minimal risk factors detected")
+
+    st.markdown("---")
+    st.caption("⚠️ **Medical Disclaimer:** This analysis is for educational purposes only. Always consult qualified healthcare professionals for proper diagnosis and treatment.")

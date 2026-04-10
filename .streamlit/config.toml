@@ -1,0 +1,15 @@
+[logger]
+level = "info"
+
+[server]
+address = "0.0.0.0"
+port = 8501
+headless = false
+enableCORS = true
+enableXsrfProtection = true
+
+[browser]
+gatherUsageStats = false
+serverAddress = "localhost"
+serverPort = 8501
+
